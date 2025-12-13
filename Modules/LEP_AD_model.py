@@ -3,9 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch_geometric
 from torch_geometric.nn import TransformerConv, GATv2Conv, GCNConv, global_add_pool, global_mean_pool, global_max_pool
-import sys
 from pathlib import Path
-sys.path.insert(0, "/ibex/project/c2012/Reem/LEP-AD_Paper/")
 from torch_geometric.utils import to_dense_batch
 import random, numpy as np
 import os
