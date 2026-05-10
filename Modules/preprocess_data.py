@@ -82,7 +82,7 @@ def smile_to_graph(smile, return_smile = False):
     mol_adj = np.zeros((c_size, c_size))
     for e1, e2 in g.edges:
         mol_adj[e1, e2] = 1
-    mol_adj += np.matrix(np.eye(mol_adj.shape[0]))
+    mol_adj += np.eye(mol_adj.shape[0])
     index_row, index_col = np.where(mol_adj >= 0.5)
     for i, j in zip(index_row, index_col):
         edge_index.append([i, j])
