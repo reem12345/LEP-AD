@@ -170,7 +170,7 @@ def get_cindex(Y, P):
 
     for i in range(1, len(Y)):
         for j in range(0, i):
-            if i is not j:
+            if i != j:
                 if (Y[i] > Y[j]):
                     pair += 1
                     summ += 1 * (P[i] > P[j]) + 0.5 * (P[i] == P[j])
