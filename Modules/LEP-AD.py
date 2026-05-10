@@ -14,9 +14,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
-from rdkit.Chem import MolFromSmiles
-import random, numpy as np, torch
-import argparse
+import random
 RDLogger.DisableLog('rdApp.*')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device : " , device)
@@ -46,13 +44,13 @@ parser.add_argument('--batch_size', type=int, default=512, help='Batch size')
 parser.add_argument('--seed', type=int, default=42, help='Seed')
 parser.add_argument('--num_epochs', type=int, default=700, help='Number of epochs')
 parser.add_argument('--n_heads', type=int, default=8, help='Number of attention heads used in Transformer-based graph layers.')
-parser.add_argument('--pooling_func', type=str, default='global_add_pool', help='pooling_func')
+parser.add_argument('--pooling_func', type=str, default='no_pooling', help='pooling_func')
 parser.add_argument('--n_heads_ct', type=int, default=8, help='Number of attention heads used in cross-attention layers.')
 parser.add_argument('--dropout', type=float, default=0.2, help='Dropout rate to apply to layers')
 parser.add_argument('--lr', type=float, default=0.0005, help='Learning Rate')
 parser.add_argument('--hidden_dim', type=int, default=128, help='hidden dimensionin the model')
 parser.add_argument('--hidden_dim_mlp', type=int, default=128, help='hidden dimensionin the model')
-parser.add_argument('--esm_model', type=str, default='esm3', 
+parser.add_argument('--esm_model', type=str, default='esm3',
                     help='Specifies the ESM protein language model to use. Options: "esm2", "esm3", "esmc300m", or "esmc600m".')
 parser.add_argument('--GNN_layer', type=str, default='TransformerConv',
     help='Specifies the graph neural network architecture used to embed the drug structure. Options may include: "GCN", "GATv2", "TransformerConv", etc.'
@@ -89,8 +87,7 @@ dataset_train = pd.read_csv(data_path + f"{data_name}_train.csv")
 dataset_test = pd.read_csv(data_path + f"{data_name}_test.csv")
 dataset = pd.concat([dataset_train, dataset_test], ignore_index=True)
 smiles_list = dataset["compound_iso_smiles"].unique().tolist()
-max_len = max(len(seq) for seq in dataset["target_sequence"])
-max_nodes = max(len(seq) for seq in dataset["compound_iso_smiles"])
+
 
 with open(data_path + "testing_proteins.pkl", "rb") as f:
     testing_proteins = pickle.load(f)
@@ -166,13 +163,12 @@ print(
 
 drugs = []
 smiles_list = dataset.compound_iso_smiles.unique().tolist()
-RDLogger.DisableLog('rdApp.*')
 for d in smiles_list:
     lg = Chem.MolToSmiles(Chem.MolFromSmiles(d), isomericSmiles=True)
     drugs.append(lg)
     
 compound_iso_smiles = drugs
-graph_path = os.path.join(data_path, data_name, 'representations', 'smile_graph.pickle')
+graph_path = os.path.join(data_path, 'representations', 'smile_graph.pickle')
 
 if not os.path.exists(graph_path):
     print("Creating SMILES graphs...")
@@ -317,7 +313,6 @@ for split in splits:
     print(f"Total params: {total_params:,}  |  Trainable: {trainable_params:,}")
     
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loss_fn = nn.MSELoss()
 
     best_val_mse = float('inf')
     patience = 100
@@ -347,7 +342,7 @@ for split in splits:
             break
 
     # Final test
-    model.load_state_dict(torch.load(model_save_path))
+    model.load_state_dict(torch.load(model_save_path, map_location=device))
     G, P = predicting(model, device, test_loader)
     test_mse, test_ci, test_rm2 = calculate_metrics(G, P, data_name)
 
