@@ -94,6 +94,9 @@ def predicting_benchmark(model, device, loader):
     return total_labels.numpy().flatten(), total_preds.numpy().flatten()
 
 def cuda(obj, *args, **kwargs):
+    """
+    Transfer any nested container of tensors to CUDA.
+    """
     if hasattr(obj, "cuda"):
         return obj.cuda(*args, **kwargs)
     elif isinstance(obj, (str, bytes)):
