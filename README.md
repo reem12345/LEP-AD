@@ -1,4 +1,4 @@
-# LEP‑AD: language embedding of proteins and attention to drugs predicts drug‑target interactions
+## LEP‑AD: language embedding of proteins and attention to drugs predicts drug‑target interactions
 ### Installation 
 
 ### Datasets & Evaluation Split
