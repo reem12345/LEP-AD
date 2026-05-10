@@ -280,12 +280,12 @@ def embed_with_esm2(
             embeddings_dict[seq] = per_res.detach().cpu().float()
 
         except RuntimeError as e:
-        if "CUDA out of memory" in str(e):
-            print(f"⚠️ CUDA OOM at index {i}, skipping sequence.")
-            failed_seqs.append(seq)
-            torch.cuda.empty_cache()
-        else:
-            raise
+            if "CUDA out of memory" in str(e):
+                print(f"⚠️ CUDA OOM at index {i}, skipping sequence.")
+                failed_seqs.append(seq)
+                torch.cuda.empty_cache()
+            else:
+                raise
         except Exception as e:
             print(f"⚠️ Failed at index {i}: {e}")
             failed_seqs.append(seq)
