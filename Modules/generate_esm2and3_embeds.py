@@ -30,7 +30,7 @@ import argparse
 def embed_with_esmc_300m(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "/ibex/project/c2012/Reem/LEP-AD_Paper/data",
+    save_root: str = "{project_folder}/data",
     device: str = "cuda",
 ) -> Tuple[Dict[str, np.ndarray], List[str]]:
     use_cuda = device.startswith("cuda") and torch.cuda.is_available()
@@ -99,7 +99,7 @@ def embed_with_esmc_300m(
 def embed_with_esmc_600m(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "/ibex/project/c2012/Reem/LEP-AD_Paper/data",
+    save_root: str = "{project_folder}/data",
     device: str = "cuda",
 ) -> Tuple[Dict[str, np.ndarray], List[str]]:
     use_cuda = device.startswith("cuda") and torch.cuda.is_available()
@@ -168,7 +168,7 @@ def embed_with_esmc_600m(
 def embed_with_esm3(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "/ibex/project/c2012/Reem/LEP-AD_Paper/data",
+    save_root: str = "{project_folder}/data",
     model_name: str = "esm3-sm-open-v1",
     device: str = "cuda",
     dtype: torch.dtype = torch.float32,
@@ -240,7 +240,7 @@ def embed_with_esm3(
 def embed_with_esm2(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "/ibex/project/c2012/Reem/LEP-AD_Paper/data",
+    save_root: str = "{project_folder}/data",
     device: str = "cuda",
     model_name: str = "facebook/esm2_t36_3B_UR50D",  # Any HF ESM-2 model
 ) -> Tuple[Dict[str, np.ndarray], List[str]]:
@@ -312,13 +312,14 @@ def embed_with_esm2(
 parser = argparse.ArgumentParser(
     description='Generate protein representations using esm2, esmc, and esm3'
 )
+parser.add_argument('--project_folder', type=str, required=True, help='Path to the project folder')
 parser.add_argument('--data_name', type=str, default='davis', help='Dataset to use')
 args = parser.parse_args()
 data_name = args.data_name
-
+project_folder = args.project_folder
 # Load the file — assuming it's whitespace- or tab-separated
-df_train = pd.read_csv(f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/{data_name}_train.csv")
-df_test = pd.read_csv(f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/{data_name}_test.csv")
+df_train = pd.read_csv(f"{project_folder}/data/{data_name}/{data_name}_train.csv")
+df_test = pd.read_csv(f"{project_folder}/data/{data_name}/{data_name}_test.csv")
 
 # Concatenate along the rows (i.e., stack |test data below train data)
 df = pd.concat([df_train, df_test], ignore_index=True)
@@ -345,22 +346,22 @@ embeddings_dict, failed = embed_with_esm2(
     data_name=data_name
 )
 
-file_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/representations/embed_with_esmc_300m.pkl"
+file_path = f"{project_folder}/data/{data_name}/representations/embed_with_esmc_300m.pkl"
 with open(file_path, "rb") as f:
     embeddings_dict = pickle.load(f)
 print(f"Loaded esmc300m embeddings for {len(embeddings_dict)} sequences")
 
-file_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/representations/embed_with_esmc_600m.pkl"
+file_path = f"{project_folder}/data/{data_name}/representations/embed_with_esmc_600m.pkl"
 with open(file_path, "rb") as f:
     embeddings_dict = pickle.load(f)
 print(f"Loaded esmc600m embeddings for {len(embeddings_dict)} sequences")
 
-file_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/representations/embed_with_esm3.pkl"
+file_path = f"{project_folder}/data/{data_name}/representations/embed_with_esm3.pkl"
 with open(file_path, "rb") as f:
     embeddings_dict = pickle.load(f)
 print(f"Loaded esm3 embeddings for {len(embeddings_dict)} sequences")
 
-file_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/representations/embed_with_esm2.pkl"
+file_path = f"{project_folder}/data/{data_name}/representations/embed_with_esm2.pkl"
 with open(file_path, "rb") as f:
     embeddings_dict = pickle.load(f)
 print(f"Loaded esm2 embeddings for {len(embeddings_dict)} sequences")
