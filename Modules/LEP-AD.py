@@ -32,6 +32,7 @@ def set_seed(seed):
 parser = argparse.ArgumentParser(
     description='Training script for the model. Supports configuration of dataset paths, model parameters, training hyperparameters, and enum_epochsuation settings.'
 )
+parser.add_argument('--project_folder', type=str, required=True, help='Path to the project folder')
 parser.add_argument('--data_name', type=str, default='davis', help='Dataset to use')
 parser.add_argument(
     '--split',
@@ -64,9 +65,10 @@ parser.add_argument(
 
 args = parser.parse_args()
 model_name = "LEP-AD"
+project_folder = args.project_folder
 data_name = args.data_name
 split = args.split
-data_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/data/{data_name}/"
+data_path = f"{project_folder}/data/{data_name}/"
 batch_size = args.batch_size
 hidden_dim = args.hidden_dim
 esm_model = args.esm_model
@@ -172,7 +174,7 @@ graph_path = os.path.join(data_path, 'representations', 'smile_graph.pickle')
 
 if not os.path.exists(graph_path):
     print("Creating SMILES graphs...")
-    os.makedirs(os.path.join(data_path, data_name, 'representations'), exist_ok=True)
+    os.makedirs(os.path.join(data_path, 'representations'), exist_ok=True)
     smile_graph = {}
     for smile in tqdm(compound_iso_smiles, desc="Processing SMILES"):
         g = smile_to_graph(smile)
@@ -317,7 +319,7 @@ for split in splits:
     best_val_mse = float('inf')
     patience = 100
     no_improve_epochs = 0
-    model_save_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/models/model_checkpoint_ct_HPO_{data_name}_{split}_{model_name}_{esm_model}_{fusion}_seed_{seed_value}.pt"
+    model_save_path = f"{project_folder}/models/model_checkpoint_ct_HPO_{data_name}_{split}_{model_name}_{esm_model}_{fusion}_seed_{seed_value}.pt"
     torch.cuda.empty_cache()
 
     for epoch in tqdm(range(num_epochs), desc=f"Training {split}"):
@@ -359,6 +361,6 @@ for split in splits:
 
     # Save result for this split
     results_df = pd.DataFrame(results)
-    output_path = f"/ibex/project/c2012/Reem/LEP-AD_Paper/results/results_ct_HPO_{data_name}_{split}_{model_name}_{esm_model}_{fusion}_seed_{seed_value}.csv"
+    output_path = f"{project_folder}/results/results_ct_HPO_{data_name}_{split}_{model_name}_{esm_model}_{fusion}_seed_{seed_value}.csv"
     results_df.to_csv(output_path, index=False)
     print(f"✅ Test results saved to: {output_path}")
