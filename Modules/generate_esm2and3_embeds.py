@@ -17,7 +17,8 @@ from esm.models.esm3 import ESM3
 from esm.sdk.api import ESMProtein, LogitsConfig
 from transformers import AutoModel, AutoTokenizer
 
-#login(token="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")
+# ---------------------------------- Add HuggingFace token ----------------------------------
+#login(token="")
 
 print("Available ESM models:")
 for model_name in LOCAL_MODEL_REGISTRY.keys():
