@@ -30,7 +30,7 @@ import argparse
 def embed_with_esmc_300m(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "{project_folder}/data",
+    save_root: str,
     device: str = "cuda",
 ) -> Tuple[Dict[str, np.ndarray], List[str]]:
     use_cuda = device.startswith("cuda") and torch.cuda.is_available()
@@ -99,7 +99,7 @@ def embed_with_esmc_300m(
 def embed_with_esmc_600m(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "{project_folder}/data",
+    save_root: str,
     device: str = "cuda",
 ) -> Tuple[Dict[str, np.ndarray], List[str]]:
     use_cuda = device.startswith("cuda") and torch.cuda.is_available()
@@ -168,7 +168,7 @@ def embed_with_esmc_600m(
 def embed_with_esm3(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "{project_folder}/data",
+    save_root: str,
     model_name: str = "esm3-sm-open-v1",
     device: str = "cuda",
     dtype: torch.dtype = torch.float32,
@@ -240,7 +240,7 @@ def embed_with_esm3(
 def embed_with_esm2(
     seq_list: List[str],
     data_name: str,
-    save_root: str = "{project_folder}/data",
+    save_root: str,
     device: str = "cuda",
     model_name: str = "facebook/esm2_t36_3B_UR50D",  # Any HF ESM-2 model
 ) -> Tuple[Dict[str, np.ndarray], List[str]]:
