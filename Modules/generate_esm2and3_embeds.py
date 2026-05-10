@@ -328,22 +328,26 @@ print( len(sorted(df["target_sequence"].unique().tolist())) )
 
 embeddings_dict, failed = embed_with_esmc_300m(
     seq_list=sorted(df["target_sequence"].dropna().unique().tolist()),
-    data_name=data_name
+    data_name=data_name,
+    save_root=f"{project_folder}/data"
 )
 
 embeddings_dict, failed = embed_with_esmc_600m(
     seq_list=sorted(df["target_sequence"].dropna().unique().tolist()),
-    data_name=data_name
+    data_name=data_name,
+    save_root=f"{project_folder}/data"
 )
 
 embeddings_dict, failed = embed_with_esm3(
     seq_list=sorted(df["target_sequence"].dropna().unique().tolist()),
-    data_name=data_name
+    data_name=data_name,
+    save_root=f"{project_folder}/data"
 )
 
 embeddings_dict, failed = embed_with_esm2(
     seq_list=sorted(df["target_sequence"].dropna().unique().tolist()),
-    data_name=data_name
+    data_name=data_name,
+    save_root=f"{project_folder}/data"
 )
 
 file_path = f"{project_folder}/data/{data_name}/representations/embed_with_esmc_300m.pkl"
